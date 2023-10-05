@@ -10,6 +10,7 @@ const connectToDb = async () => {
       "[connect] Could not establish a connection with database",
       error
     );
+    console.error("[connect] Could not connect to Database", error);
   }
 };
 

@@ -26,6 +26,8 @@ app.use(express.json());
 // Parses URL Encoded data and provides it in req.body
 app.use(express.urlencoded({ extended: true }));
 
+connectToDb();
+
 app.get("/", (req, res) => {
   res.send("Main Route reverted");
 });
