@@ -4,9 +4,10 @@ import helmet from "helmet";
 import * as dotenv from "dotenv";
 dotenv.config();
 import { connectToDb } from "./db/connect";
+import { todoRoutes } from "@/routes";
 
 const app = express();
-const port: number = parseInt(process.env.PORT);
+const port: number = parseInt(process.env.PORT!);
 
 // Connect to the database
 connectToDb();
@@ -27,6 +28,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 connectToDb();
+
+app.use("/api", todoRoutes);
 
 app.get("/", (req, res) => {
   res.send("Main Route reverted");
