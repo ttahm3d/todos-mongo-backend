@@ -54,3 +54,23 @@ export const saveTodo = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const deleteTodo = async (req: Request, res: Response) => {
+  const todoId: string = req.params.id;
+  if (!todoId) res.send(400).json({ error: "Missing parameter 'id'" });
+  try {
+    const todo: ITodo | null = await TodoModel.findOne({ _id: todoId });
+    if (!todo)
+      res.send(404).json({ error: `Could not find todo with id: ${todoId}` });
+    await TodoModel.deleteOne({ _id: todoId });
+    res.status(202).send({
+      message: "Deleted todo",
+    });
+  } catch (error) {
+    console.error(["TodoController:DELETE -> failed to delete todo"]);
+    res.status(500).send({
+      messsage: "Failed to delete todo",
+      error,
+    });
+  }
+};
