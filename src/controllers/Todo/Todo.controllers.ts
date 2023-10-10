@@ -10,7 +10,7 @@ export const getTodos = async (req: Request, res: Response) => {
       todos,
     });
   } catch (error) {
-    console.error(["TodoController:GET -> failed to fetch todos"]);
+    console.error("[TodoController:GET] -> failed to fetch todos");
     res.status(500).send({
       messsage: "Failed to fetch todos",
       error,
@@ -30,7 +30,7 @@ export const getTodoById = async (req: Request, res: Response) => {
       todo,
     });
   } catch (error) {
-    console.error(["TodoController:GET -> failed to fetch todos"]);
+    console.error("[TodoController:GET] -> failed to fetch todos");
     res.status(500).send({
       messsage: "Failed to fetch todos",
       error,
@@ -47,7 +47,7 @@ export const saveTodo = async (req: Request, res: Response) => {
       todo,
     });
   } catch (error) {
-    console.error(["TodoController:POST -> failed to save todo"]);
+    console.error("[TodoController:POST] -> failed to save todo");
     res.status(500).send({
       messsage: "Failed to create todo",
       error,
@@ -73,7 +73,34 @@ export const updateTodo = async (req: Request, res: Response) => {
         message: "Updated todo",
       });
     }
-  } catch (error) {}
+  } catch (error) {
+    console.error("[TodoController:PUT] -> failed to save todo");
+    res.status(500).send({
+      messsage: "Failed to update todo",
+      error,
+    });
+  }
+};
+
+export const toggleTodoCompletion = async (req: Request, res: Response) => {
+  const todoId: string = req.params.id;
+  if (!todoId) res.send(400).json({ error: "Missing parameter 'id'" });
+
+  try {
+    const todo: ITodo | null = await TodoModel.findById(todoId);
+    if (!todo)
+      res.send(404).json({ error: `Could not find todo with id: ${todoId}` });
+    else {
+      todo.isCompleted = !todo.isCompleted;
+      await todo.save();
+      res.status(204).send({
+        message: "Marked todo complete",
+      });
+    }
+  } catch (error) {
+    console.error("[TodoController:PATCH] -> failed to save todo");
+    res.status(500).send({ message: "Internal server error", error: error });
+  }
 };
 
 export const deleteTodo = async (req: Request, res: Response) => {
@@ -88,7 +115,7 @@ export const deleteTodo = async (req: Request, res: Response) => {
       message: "Deleted todo",
     });
   } catch (error) {
-    console.error(["TodoController:DELETE -> failed to delete todo"]);
+    console.error("[TodoController:DELETE] -> failed to delete todo");
     res.status(500).send({
       messsage: "Failed to delete todo",
       error,
