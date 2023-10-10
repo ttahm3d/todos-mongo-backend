@@ -37,3 +37,20 @@ export const getTodoById = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const saveTodo = async (req: Request, res: Response) => {
+  try {
+    const { title, description, isCompleted = false } = req.body;
+    const todo = await TodoModel.create({ title, description, isCompleted });
+    res.status(201).send({
+      message: "Successfully created todo",
+      todo,
+    });
+  } catch (error) {
+    console.error(["TodoController:POST -> failed to save todo"]);
+    res.status(500).send({
+      messsage: "Failed to create todo",
+      error,
+    });
+  }
+};
