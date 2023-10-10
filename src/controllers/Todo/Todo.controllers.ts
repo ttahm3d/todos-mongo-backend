@@ -55,6 +55,27 @@ export const saveTodo = async (req: Request, res: Response) => {
   }
 };
 
+export const updateTodo = async (req: Request, res: Response) => {
+  const todoId: string = req.params.id;
+  if (!todoId) res.send(400).json({ error: "Missing parameter 'id'" });
+
+  try {
+    const todo: ITodo | null = await TodoModel.findById(todoId);
+    if (!todo)
+      res.send(404).json({ error: `Could not find todo with id: ${todoId}` });
+    else {
+      const newTitle = req.body.title || todo?.title;
+      const newDescription = req.body.description || todo?.description;
+      todo.title = newTitle;
+      todo.description = newDescription;
+      await todo.save();
+      res.status(200).send({
+        message: "Updated todo",
+      });
+    }
+  } catch (error) {}
+};
+
 export const deleteTodo = async (req: Request, res: Response) => {
   const todoId: string = req.params.id;
   if (!todoId) res.send(400).json({ error: "Missing parameter 'id'" });
